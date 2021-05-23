@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=fonty
+GenericName=fonty
+Comment=fonty
+Exec=/opt/fonty/fonty %U
+Icon=/opt/fonty/fonty.png
+Terminal=false
+Type=Application
+StartupNotify=true

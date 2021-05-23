@@ -1,0 +1,8 @@
+Package: fonty
+Version: 1.0
+Section: misc
+Priority: optional
+Architecture: amd64
+Maintainer: DP Software <>
+Description: fonty
+Distribution: development
