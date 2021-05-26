@@ -249,7 +249,6 @@ public class Fonty extends Application {
                 } catch (FileNotFoundException exception) {
                     exception.printStackTrace();
                 }
-                setOpenedFont(openedFont);
             }
             else {
                 try {
