@@ -135,7 +135,6 @@ public class Fonty extends Application {
                 setSelFont();
         });
 
-
         cbBold = new CheckBox("Bold");
         cbBold.setOnAction(e -> setSelFont());
         cbBold.setFont(defFont);
@@ -145,14 +144,7 @@ public class Fonty extends Application {
 
         loadButton = new Button("Load font");
         loadButton.setOnAction(e -> {
-            openedFile = new File(String.valueOf(new FileChooser().showOpenDialog(stage)));
-            try {
-                openedFont = Font.loadFont(new FileInputStream(openedFile), spinner.getValue());
-                stage.setTitle("Fonty - " + openedFile.getName());
-            } catch (FileNotFoundException exception) {
-                exception.printStackTrace();
-            }
-            text.setFont(openedFont);
+            loadFont(stage);
             System.out.println("Loaded from app: " + openedFile.toString());
             toggle.setSelected(true);
             combo.setDisable(true);
@@ -235,6 +227,17 @@ public class Fonty extends Application {
         getArgFont(stage);
     }
 
+    private void loadFont(Stage stage) {
+        openedFile = new File(String.valueOf(new FileChooser().showOpenDialog(stage)));
+        try {
+            openedFont = Font.loadFont(new FileInputStream(openedFile), spinner.getValue());
+            stage.setTitle("Fonty - " + openedFile.getName());
+            text.setFont(openedFont);
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
+        }
+    }
+
     private void spinnerClicked() {
         if (toggle.isSelected()) {
             if (argFont != null) {
@@ -270,6 +273,15 @@ public class Fonty extends Application {
         text.setFont(openedFont);
     }
 
+    private void setSelFont() {
+        Font f = Font.font(
+                combo.getValue(),
+                cbBold.isSelected() ? FontWeight.BOLD: FontWeight.NORMAL,
+                cbItalic.isSelected() ? FontPosture.ITALIC: FontPosture.REGULAR,
+                spinner.getValue());
+        text.setFont(f);
+    }
+
     private void getArgFont(Stage stage) {
         if (argFont != null) {
             File file = new File(
@@ -287,15 +299,6 @@ public class Fonty extends Application {
             cbBold.setDisable(true);
             cbItalic.setDisable(true);
         }
-    }
-
-    private void setSelFont() {
-        Font f = Font.font(
-                combo.getValue(),
-                cbBold.isSelected() ? FontWeight.BOLD: FontWeight.NORMAL,
-                cbItalic.isSelected() ? FontPosture.ITALIC: FontPosture.REGULAR,
-                spinner.getValue());
-        text.setFont(f);
     }
 
     private void setPrefs(Stage stage) {
