@@ -144,12 +144,13 @@ public class Fonty extends Application {
 
         loadButton = new Button("Load font");
         loadButton.setOnAction(e -> {
-            loadFont(stage);
-            System.out.println("Loaded from app: " + openedFile.toString());
-            toggle.setSelected(true);
-            combo.setDisable(true);
-            cbBold.setDisable(true);
-            cbItalic.setDisable(true);
+            if (loadFont(stage)) {
+                System.out.println("Loaded from app: " + openedFile.toString());
+                toggle.setSelected(true);
+                combo.setDisable(true);
+                cbBold.setDisable(true);
+                cbItalic.setDisable(true);
+            }
         });
         loadButton.setFont(defFont);
 
@@ -227,15 +228,18 @@ public class Fonty extends Application {
         getArgFont(stage);
     }
 
-    private void loadFont(Stage stage) {
+    private boolean loadFont(Stage stage) {
+        boolean loaded = false;
         openedFile = new File(String.valueOf(new FileChooser().showOpenDialog(stage)));
         try {
             openedFont = Font.loadFont(new FileInputStream(openedFile), spinner.getValue());
             stage.setTitle("Fonty - " + openedFile.getName());
             text.setFont(openedFont);
+            loaded = true;
         } catch (FileNotFoundException exception) {
             exception.printStackTrace();
         }
+        return loaded;
     }
 
     private void spinnerClicked() {
