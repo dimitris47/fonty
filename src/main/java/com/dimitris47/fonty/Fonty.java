@@ -84,7 +84,7 @@ public class Fonty extends Application {
                     r.keyRelease(java.awt.event.KeyEvent.VK_UP);
                 } catch (AWTException exc) { exc.printStackTrace(); }
             }
-            else if  (deltaY < 0) {
+            else if (deltaY < 0) {
                 try {
                     Robot r = new Robot();
                     r.keyPress(java.awt.event.KeyEvent.VK_DOWN);
@@ -112,15 +112,13 @@ public class Fonty extends Application {
                 spinner.getValueFactory().setValue(spinner.getValue() - 8);
             if (toggle.isSelected()) {
                 if (argFont != null) {
-                    File file = new File(
-                            String.valueOf(Paths.get(
-                                    URI.create("file:///" + argFont.replace(" ", "%20")))));
+                    File file = new File(String.valueOf(Paths.get(
+                            URI.create("file:///" + argFont.replace(" ", "%20")))));
                     try {
                         openedFont = Font.loadFont(new FileInputStream(file), 42);
                     } catch (FileNotFoundException exception) {
                         exception.printStackTrace();
                     }
-                    setOpenedFont(openedFont);
                 }
                 else {
                     try {
@@ -245,9 +243,8 @@ public class Fonty extends Application {
     private void spinnerClicked() {
         if (toggle.isSelected()) {
             if (argFont != null) {
-                File file = new File(
-                        String.valueOf(Paths.get(
-                                URI.create("file:///" + argFont.replace(" ", "%20")))));
+                File file = new File(String.valueOf(Paths.get(
+                        URI.create("file:///" + argFont.replace(" ", "%20")))));
                 try {
                     openedFont = Font.loadFont(new FileInputStream(file), 42);
                 } catch (FileNotFoundException exception) {
@@ -287,9 +284,8 @@ public class Fonty extends Application {
 
     private void getArgFont(Stage stage) {
         if (argFont != null) {
-            File file = new File(
-                    String.valueOf(Paths.get(
-                            URI.create("file:///"+ argFont.replace(" ", "%20")))));
+            File file = new File(String.valueOf(Paths.get(
+                    URI.create("file:///" + argFont.replace(" ", "%20")))));
             try {
                 openedFont = Font.loadFont(new FileInputStream(file), 42);
                 stage.setTitle("Fonty - " + file.getName());
