@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.prefs.Preferences;
 
 public class Fonty extends Application {
@@ -49,6 +50,7 @@ public class Fonty extends Application {
         defWidth = 1024;
         defHeight = 768;
         Font defFont = new Font(14);
+
         defText = """
                 The quick brown fox jumps over the lazy dog
                                 
@@ -63,7 +65,6 @@ public class Fonty extends Application {
                 αβγδεζηθικλμνξοπρστυφχψωςάέήίόύώϊϋ""";
 
         lblFontFamily = new Label("Font Family:");
-        lblFontFamily.setFont(defFont);
 
         combo = new ComboBox<>();
         combo.getItems().addAll(Font.getFamilies());
@@ -94,7 +95,6 @@ public class Fonty extends Application {
         });
 
         lblFontSize = new Label("Size:");
-        lblFontSize.setFont(defFont);
 
         spinner = new Spinner<>();
         spinner.setMaxWidth(80);
@@ -129,10 +129,8 @@ public class Fonty extends Application {
 
         cbBold = new CheckBox("Bold");
         cbBold.setOnAction(e -> setSelFont());
-        cbBold.setFont(defFont);
         cbItalic = new CheckBox("Italic");
         cbItalic.setOnAction(e -> setSelFont());
-        cbItalic.setFont(defFont);
 
         loadButton = new Button("Load font");
         loadButton.setOnAction(e -> {
@@ -144,7 +142,6 @@ public class Fonty extends Application {
                 cbItalic.setDisable(true);
             }
         });
-        loadButton.setFont(defFont);
 
         toggle = new ToggleButton("File mode");
         toggle.setSelected(false);
@@ -162,14 +159,11 @@ public class Fonty extends Application {
                 setSelFont();
             }
         });
-        toggle.setFont(defFont);
 
         reset = new Button("Reset text");
-        reset.setFont(defFont);
         reset.setOnAction(e -> text.setText(defText));
 
         info = new Button("Info");
-        info.setFont(defFont);
         info.setOnAction(e -> {
             String info = """
                 Program created by Dimitris Psathas
@@ -205,6 +199,10 @@ public class Fonty extends Application {
         VBox box = new VBox();
         box.setSpacing(8);
         box.getChildren().addAll(hBox, text);
+
+        for (var node : Arrays.asList(
+                lblFontFamily, lblFontSize, cbBold, cbItalic, loadButton, toggle, reset, info))
+            node.setFont(defFont);
 
         Scene scene = new Scene(box, defWidth, defHeight);
         stage.setScene(scene);
