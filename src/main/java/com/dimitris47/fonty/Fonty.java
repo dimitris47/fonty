@@ -102,8 +102,8 @@ public class Fonty extends Application {
         spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(12, 124, 42, 8));
         spinner.getEditor().setFont(defFont);
         spinner.getEditor().setAlignment(Pos.CENTER);
-        spinner.setOnMouseClicked(e -> spinnerClicked());
-        spinner.setOnKeyPressed(e -> spinnerClicked());
+        spinner.setOnMouseClicked(e -> spinnerClicked(stage));
+        spinner.setOnKeyPressed(e -> spinnerClicked(stage));
         spinner.setOnScroll((ScrollEvent e) -> {
             int deltaY = (int) e.getDeltaY();
             if (deltaY > 0)
@@ -111,15 +111,8 @@ public class Fonty extends Application {
             else if (deltaY < 0)
                 spinner.getValueFactory().setValue(spinner.getValue() - 8);
             if (toggle.isSelected()) {
-                if (argFont != null) {
-                    File file = new File(String.valueOf(Paths.get(
-                            URI.create("file:///" + argFont.replace(" ", "%20")))));
-                    try {
-                        openedFont = Font.loadFont(new FileInputStream(file), 42);
-                    } catch (FileNotFoundException exception) {
-                        exception.printStackTrace();
-                    }
-                }
+                if (argFont != null)
+                    openFile(stage);
                 else {
                     try {
                         openedFont = Font.loadFont(new FileInputStream(openedFile), 42);
@@ -227,6 +220,28 @@ public class Fonty extends Application {
         getArgFont(stage);
     }
 
+    private void getArgFont(Stage stage) {
+        if (argFont != null) {
+            openFile(stage);
+            text.setFont(openedFont);
+            toggle.setSelected(true);
+            combo.setDisable(true);
+            cbBold.setDisable(true);
+            cbItalic.setDisable(true);
+        }
+    }
+
+    private void openFile(Stage stage) {
+        File file = new File(String.valueOf(Paths.get(
+                URI.create("file:///" + argFont.replace(" ", "%20")))));
+        try {
+            openedFont = Font.loadFont(new FileInputStream(file), 42);
+            stage.setTitle("Fonty - " + file.getName());
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
+        }
+    }
+
     private boolean loadFont(Stage stage) {
         boolean loaded = false;
         openedFile = new File(String.valueOf(new FileChooser().showOpenDialog(stage)));
@@ -241,16 +256,10 @@ public class Fonty extends Application {
         return loaded;
     }
 
-    private void spinnerClicked() {
+    private void spinnerClicked(Stage stage) {
         if (toggle.isSelected()) {
             if (argFont != null) {
-                File file = new File(String.valueOf(Paths.get(
-                        URI.create("file:///" + argFont.replace(" ", "%20")))));
-                try {
-                    openedFont = Font.loadFont(new FileInputStream(file), 42);
-                } catch (FileNotFoundException exception) {
-                    exception.printStackTrace();
-                }
+                openFile(stage);
             }
             else {
                 try {
@@ -273,24 +282,6 @@ public class Fonty extends Application {
                 cbItalic.isSelected() ? FontPosture.ITALIC: FontPosture.REGULAR,
                 spinner.getValue());
         text.setFont(f);
-    }
-
-    private void getArgFont(Stage stage) {
-        if (argFont != null) {
-            File file = new File(String.valueOf(Paths.get(
-                    URI.create("file:///" + argFont.replace(" ", "%20")))));
-            try {
-                openedFont = Font.loadFont(new FileInputStream(file), 42);
-                stage.setTitle("Fonty - " + file.getName());
-            } catch (FileNotFoundException exception) {
-                System.out.println("No file loaded after start");
-            }
-            text.setFont(openedFont);
-            toggle.setSelected(true);
-            combo.setDisable(true);
-            cbBold.setDisable(true);
-            cbItalic.setDisable(true);
-        }
     }
 
     private void setPrefs(Stage stage) {
