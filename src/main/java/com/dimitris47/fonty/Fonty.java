@@ -127,7 +127,8 @@ public class Fonty extends Application {
                         exception.printStackTrace();
                     }
                 }
-                setOpenedFont(openedFont);
+                openedFont = Font.font(openedFont.getFamily(), spinner.getValue());
+                text.setFont(openedFont);
             }
             else
                 setSelFont();
@@ -258,19 +259,11 @@ public class Fonty extends Application {
                     exception.printStackTrace();
                 }
             }
-            setOpenedFont(openedFont);
+            text.setFont(openedFont);
+            text.setFont(new Font(spinner.getValue()));
         }
         else
             setSelFont();
-    }
-
-    private void setOpenedFont(Font openedFont) {
-        openedFont = Font.font(
-                openedFont.getFamily(),
-                cbBold.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
-                cbItalic.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                spinner.getValue());
-        text.setFont(openedFont);
     }
 
     private void setSelFont() {
