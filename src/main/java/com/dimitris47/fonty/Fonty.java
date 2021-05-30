@@ -110,21 +110,7 @@ public class Fonty extends Application {
                 spinner.getValueFactory().setValue(spinner.getValue() + 8);
             else if (deltaY < 0)
                 spinner.getValueFactory().setValue(spinner.getValue() - 8);
-            if (toggle.isSelected()) {
-                if (argFont != null)
-                    openFile(stage);
-                else {
-                    try {
-                        openedFont = Font.loadFont(new FileInputStream(openedFile), 42);
-                    } catch (FileNotFoundException exception) {
-                        exception.printStackTrace();
-                    }
-                }
-                openedFont = Font.font(openedFont.getFamily(), spinner.getValue());
-                text.setFont(openedFont);
-            }
-            else
-                setSelFont();
+            spinnerClicked(stage);
         });
 
         cbBold = new CheckBox("Bold");
@@ -235,9 +221,7 @@ public class Fonty extends Application {
         try {
             openedFont = Font.loadFont(new FileInputStream(file), 42);
             stage.setTitle("Fonty - " + file.getName());
-        } catch (FileNotFoundException exception) {
-            exception.printStackTrace();
-        }
+        } catch (FileNotFoundException exc) { exc.printStackTrace(); }
     }
 
     private boolean loadFont(Stage stage) {
@@ -248,26 +232,21 @@ public class Fonty extends Application {
             stage.setTitle("Fonty - " + openedFile.getName());
             text.setFont(openedFont);
             loaded = true;
-        } catch (FileNotFoundException exception) {
-            exception.printStackTrace();
-        }
+        } catch (FileNotFoundException exc) { exc.printStackTrace(); }
         return loaded;
     }
 
     private void spinnerClicked(Stage stage) {
         if (toggle.isSelected()) {
-            if (argFont != null) {
+            if (argFont != null)
                 openFile(stage);
-            }
             else {
                 try {
                     openedFont = Font.loadFont(new FileInputStream(openedFile), 42);
-                } catch (FileNotFoundException exception) {
-                    exception.printStackTrace();
-                }
+                } catch (FileNotFoundException exc) { exc.printStackTrace(); }
             }
+            openedFont = Font.font(openedFont.getFamily(), spinner.getValue());
             text.setFont(openedFont);
-            text.setFont(new Font(spinner.getValue()));
         }
         else
             setSelFont();
