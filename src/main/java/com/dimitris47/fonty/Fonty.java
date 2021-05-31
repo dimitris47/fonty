@@ -22,6 +22,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ public class Fonty extends Application {
     Preferences prefs;
     double defWidth, defHeight;
 
-    Label lblFontFamily, lblFontSize;
+    Label lblFontFamily, lblFontSize, lblStatus;
     ComboBox<String> combo;
     Button loadButton, reset, info;
     ToggleButton toggle;
@@ -102,15 +103,25 @@ public class Fonty extends Application {
         spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(12, 124, 42, 8));
         spinner.getEditor().setFont(defFont);
         spinner.getEditor().setAlignment(Pos.CENTER);
-        spinner.setOnMouseClicked(e -> spinnerClicked(stage));
-        spinner.setOnKeyPressed(e -> spinnerClicked(stage));
+        spinner.setOnMouseClicked(e -> {
+            try {
+                spinnerClicked(stage);
+            } catch (IOException | FontFormatException exc) { exc.printStackTrace(); }
+        });
+        spinner.setOnKeyPressed(e -> {
+            try {
+                spinnerClicked(stage);
+            } catch (IOException | FontFormatException exc) { exc.printStackTrace(); }
+        });
         spinner.setOnScroll((ScrollEvent e) -> {
             int deltaY = (int) e.getDeltaY();
             if (deltaY > 0)
                 spinner.getValueFactory().setValue(spinner.getValue() + 8);
             else if (deltaY < 0)
                 spinner.getValueFactory().setValue(spinner.getValue() - 8);
-            spinnerClicked(stage);
+            try {
+                spinnerClicked(stage);
+            } catch (IOException | FontFormatException exc) { exc.printStackTrace(); }
         });
 
         cbBold = new CheckBox("Bold");
@@ -136,6 +147,7 @@ public class Fonty extends Application {
                 combo.setDisable(true);
                 cbBold.setDisable(true);
                 cbItalic.setDisable(true);
+                lblStatus.setText("");
             }
             else {
                 combo.setDisable(false);
@@ -143,6 +155,9 @@ public class Fonty extends Application {
                 cbItalic.setDisable(false);
                 stage.setTitle("Fonty");
                 setSelFont();
+                try {
+                    validateChars();
+                } catch (IOException | FontFormatException exc) { exc.printStackTrace(); }
             }
         });
 
@@ -179,15 +194,22 @@ public class Fonty extends Application {
 
         text = new TextArea();
         text.setWrapText(true);
-        text.minHeightProperty().bind(stage.heightProperty().subtract(84));
+        text.minHeightProperty().bind(stage.heightProperty().subtract(108));
         text.setPadding(new Insets(8));
+
+        lblStatus = new Label();
+        lblStatus.setPadding(new Insets(0, 0, 2, 8));
+        HBox statusBar = new HBox();
+        statusBar.setMaxHeight(24);
+        statusBar.getChildren().add(lblStatus);
+        statusBar.setAlignment(Pos.CENTER_LEFT);
 
         VBox box = new VBox();
         box.setSpacing(8);
-        box.getChildren().addAll(hBox, text);
+        box.getChildren().addAll(hBox, text, statusBar);
 
         for (var node : Arrays.asList(
-                lblFontFamily, lblFontSize, cbBold, cbItalic, loadButton, toggle, reset, info))
+                lblFontFamily, lblFontSize, cbBold, cbItalic, loadButton, toggle, reset, info, lblStatus))
             node.setFont(defFont);
 
         Scene scene = new Scene(box, defWidth, defHeight);
@@ -215,6 +237,19 @@ public class Fonty extends Application {
         }
     }
 
+    private void validateChars() throws IOException, FontFormatException {
+        lblStatus.setText("");
+        if (toggle.isSelected()) {
+            String s = text.getText();
+            java.awt.Font f = java.awt.Font.createFont(0, new File(String.valueOf(openedFile)));
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (!f.canDisplay(c))
+                    lblStatus.setText("Loaded font does not support all scripts on displayed text");
+            }
+        }
+    }
+
     private void openFile(Stage stage) {
         File file = new File(String.valueOf(Paths.get(
                 URI.create("file:///" + argFont.replace(" ", "%20")))));
@@ -232,11 +267,12 @@ public class Fonty extends Application {
             stage.setTitle("Fonty - " + openedFile.getName());
             text.setFont(openedFont);
             loaded = true;
-        } catch (FileNotFoundException exc) { exc.printStackTrace(); }
+            validateChars();
+        } catch (FontFormatException | IOException exc) { exc.printStackTrace(); }
         return loaded;
     }
 
-    private void spinnerClicked(Stage stage) {
+    private void spinnerClicked(Stage stage) throws IOException, FontFormatException {
         if (toggle.isSelected()) {
             if (argFont != null)
                 openFile(stage);
@@ -245,11 +281,11 @@ public class Fonty extends Application {
                     openedFont = Font.loadFont(new FileInputStream(openedFile), 42);
                 } catch (FileNotFoundException exc) { exc.printStackTrace(); }
             }
-            openedFont = Font.font(openedFont.getFamily(), spinner.getValue());
-            text.setFont(openedFont);
+            text.setFont(Font.font(openedFont.getFamily(), spinner.getValue()));
         }
         else
             setSelFont();
+        validateChars();
     }
 
     private void setSelFont() {
