@@ -85,8 +85,7 @@ public class Fonty extends Application {
                     r.keyPress(java.awt.event.KeyEvent.VK_UP);
                     r.keyRelease(java.awt.event.KeyEvent.VK_UP);
                 } catch (AWTException exc) { exc.printStackTrace(); }
-            }
-            else if (deltaY < 0) {
+            } else if (deltaY < 0) {
                 try {
                     Robot r = new Robot();
                     r.keyPress(java.awt.event.KeyEvent.VK_DOWN);
@@ -115,10 +114,11 @@ public class Fonty extends Application {
         });
         spinner.setOnScroll((ScrollEvent e) -> {
             int deltaY = (int) e.getDeltaY();
-            if (deltaY > 0)
+            if (deltaY > 0) {
                 spinner.getValueFactory().setValue(spinner.getValue() + 8);
-            else if (deltaY < 0)
+            } else if (deltaY < 0) {
                 spinner.getValueFactory().setValue(spinner.getValue() - 8);
+            }
             try {
                 spinnerClicked(stage);
             } catch (IOException | FontFormatException exc) { exc.printStackTrace(); }
@@ -148,8 +148,7 @@ public class Fonty extends Application {
                 cbBold.setDisable(true);
                 cbItalic.setDisable(true);
                 lblStatus.setText("");
-            }
-            else {
+            } else {
                 combo.setDisable(false);
                 cbBold.setDisable(false);
                 cbItalic.setDisable(false);
@@ -274,25 +273,25 @@ public class Fonty extends Application {
 
     private void spinnerClicked(Stage stage) throws IOException, FontFormatException {
         if (toggle.isSelected()) {
-            if (argFont != null)
+            if (argFont != null) {
                 openFile(stage);
-            else {
+            } else {
                 try {
                     openedFont = Font.loadFont(new FileInputStream(openedFile), 42);
                 } catch (FileNotFoundException exc) { exc.printStackTrace(); }
             }
             text.setFont(Font.font(openedFont.getFamily(), spinner.getValue()));
-        }
-        else
+        } else {
             setSelFont();
+        }
         validateChars();
     }
 
     private void setSelFont() {
         Font f = Font.font(
                 combo.getValue(),
-                cbBold.isSelected() ? FontWeight.BOLD: FontWeight.NORMAL,
-                cbItalic.isSelected() ? FontPosture.ITALIC: FontPosture.REGULAR,
+                cbBold.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
+                cbItalic.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 spinner.getValue());
         text.setFont(f);
     }
@@ -316,9 +315,9 @@ public class Fonty extends Application {
 
     private void getPrefs(Stage stage) {
         final String isMax = prefs.get("isMax", "false");
-        if (isMax.equals("true"))
+        if (isMax.equals("true")) {
             stage.setMaximized(true);
-        else {
+        } else {
             final double savedX = Double.parseDouble(prefs.get("locationX", "128.0"));
             final double savedY = Double.parseDouble(prefs.get("locationY", "64.0"));
             stage.setX(savedX);
