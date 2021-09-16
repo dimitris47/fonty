@@ -46,7 +46,7 @@ public class Fonty extends Application {
     static String argFont;
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException, FontFormatException {
         prefs = Preferences.userNodeForPackage(Fonty.class);
         defWidth = 1024;
         defHeight = 768;
@@ -84,13 +84,17 @@ public class Fonty extends Application {
                     Robot r = new Robot();
                     r.keyPress(java.awt.event.KeyEvent.VK_UP);
                     r.keyRelease(java.awt.event.KeyEvent.VK_UP);
-                } catch (AWTException exc) { exc.printStackTrace(); }
+                } catch (AWTException exc) {
+                    exc.printStackTrace();
+                }
             } else if (deltaY < 0) {
                 try {
                     Robot r = new Robot();
                     r.keyPress(java.awt.event.KeyEvent.VK_DOWN);
                     r.keyRelease(java.awt.event.KeyEvent.VK_DOWN);
-                } catch (AWTException exc) { exc.printStackTrace(); }
+                } catch (AWTException exc) {
+                    exc.printStackTrace();
+                }
             }
         });
 
@@ -105,12 +109,16 @@ public class Fonty extends Application {
         spinner.setOnMouseClicked(e -> {
             try {
                 spinnerClicked(stage);
-            } catch (IOException | FontFormatException exc) { exc.printStackTrace(); }
+            } catch (IOException | FontFormatException exc) {
+                exc.printStackTrace();
+            }
         });
         spinner.setOnKeyPressed(e -> {
             try {
                 spinnerClicked(stage);
-            } catch (IOException | FontFormatException exc) { exc.printStackTrace(); }
+            } catch (IOException | FontFormatException exc) {
+                exc.printStackTrace();
+            }
         });
         spinner.setOnScroll((ScrollEvent e) -> {
             int deltaY = (int) e.getDeltaY();
@@ -121,7 +129,9 @@ public class Fonty extends Application {
             }
             try {
                 spinnerClicked(stage);
-            } catch (IOException | FontFormatException exc) { exc.printStackTrace(); }
+            } catch (IOException | FontFormatException exc) {
+                exc.printStackTrace();
+            }
         });
 
         cbBold = new CheckBox("Bold");
@@ -131,12 +141,16 @@ public class Fonty extends Application {
 
         loadButton = new Button("Load font");
         loadButton.setOnAction(e -> {
-            if (loadFont(stage)) {
-                System.out.println("Loaded from app: " + openedFile.toString());
-                toggle.setSelected(true);
-                combo.setDisable(true);
-                cbBold.setDisable(true);
-                cbItalic.setDisable(true);
+            try {
+                if (loadFont(stage)) {
+                    System.out.println("Loaded from app: " + openedFile.toString());
+                    toggle.setSelected(true);
+                    combo.setDisable(true);
+                    cbBold.setDisable(true);
+                    cbItalic.setDisable(true);
+                }
+            } catch (IOException | FontFormatException exc) {
+                exc.printStackTrace();
             }
         });
 
@@ -147,7 +161,7 @@ public class Fonty extends Application {
                 combo.setDisable(true);
                 cbBold.setDisable(true);
                 cbItalic.setDisable(true);
-                lblStatus.setText("");
+                lblStatus.setText("Non-latin characters might be displayed in a fallback font");
             } else {
                 combo.setDisable(false);
                 cbBold.setDisable(false);
@@ -156,7 +170,9 @@ public class Fonty extends Application {
                 setSelFont();
                 try {
                     validateChars();
-                } catch (IOException | FontFormatException exc) { exc.printStackTrace(); }
+                } catch (IOException | FontFormatException exc) {
+                    exc.printStackTrace();
+                }
             }
         });
 
@@ -225,7 +241,7 @@ public class Fonty extends Application {
         getArgFont(stage);
     }
 
-    private void getArgFont(Stage stage) {
+    private void getArgFont(Stage stage) throws IOException, FontFormatException {
         if (argFont != null) {
             openFile(stage);
             text.setFont(openedFont);
@@ -234,31 +250,36 @@ public class Fonty extends Application {
             cbBold.setDisable(true);
             cbItalic.setDisable(true);
         }
+        validateChars();
     }
 
     private void validateChars() throws IOException, FontFormatException {
-        lblStatus.setText("");
+        lblStatus.setText("Non-latin characters might be displayed in a fallback font");
+        String s = text.getText();
         if (toggle.isSelected()) {
-            String s = text.getText();
             java.awt.Font f = java.awt.Font.createFont(0, new File(String.valueOf(openedFile)));
             for (int i = 0; i < s.length(); i++) {
                 char c = s.charAt(i);
                 if (!f.canDisplay(c))
-                    lblStatus.setText("Loaded font does not support all scripts on displayed text");
+                    lblStatus.setText(
+                            "Loaded font does not support all scripts on displayed text - using fallback font");
             }
         }
     }
 
-    private void openFile(Stage stage) {
+    private void openFile(Stage stage) throws IOException, FontFormatException {
         File file = new File(String.valueOf(Paths.get(
                 URI.create("file:///" + argFont.replace(" ", "%20")))));
         try {
             openedFont = Font.loadFont(new FileInputStream(file), 42);
             stage.setTitle("Fonty - " + file.getName());
-        } catch (FileNotFoundException exc) { exc.printStackTrace(); }
+        } catch (FileNotFoundException exc) {
+            exc.printStackTrace();
+        }
+        validateChars();
     }
 
-    private boolean loadFont(Stage stage) {
+    private boolean loadFont(Stage stage) throws IOException, FontFormatException {
         boolean loaded = false;
         openedFile = new File(String.valueOf(new FileChooser().showOpenDialog(stage)));
         try {
@@ -266,8 +287,10 @@ public class Fonty extends Application {
             stage.setTitle("Fonty - " + openedFile.getName());
             text.setFont(openedFont);
             loaded = true;
-            validateChars();
-        } catch (FontFormatException | IOException exc) { exc.printStackTrace(); }
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
+        validateChars();
         return loaded;
     }
 
@@ -278,7 +301,9 @@ public class Fonty extends Application {
             } else {
                 try {
                     openedFont = Font.loadFont(new FileInputStream(openedFile), 42);
-                } catch (FileNotFoundException exc) { exc.printStackTrace(); }
+                } catch (FileNotFoundException exc) {
+                    exc.printStackTrace();
+                }
             }
             text.setFont(Font.font(openedFont.getFamily(), spinner.getValue()));
         } else {
