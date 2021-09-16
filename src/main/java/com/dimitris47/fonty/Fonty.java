@@ -260,9 +260,11 @@ public class Fonty extends Application {
             java.awt.Font f = java.awt.Font.createFont(0, new File(String.valueOf(openedFile)));
             for (int i = 0; i < s.length(); i++) {
                 char c = s.charAt(i);
-                if (!f.canDisplay(c))
+                if (!f.canDisplay(c)) {
                     lblStatus.setText(
                             "Loaded font does not support all scripts on displayed text - using fallback font");
+                    break;
+                }
             }
         }
     }
