@@ -32,7 +32,7 @@ public class Fonty extends Application {
     Preferences prefs;
     double defWidth, defHeight;
 
-    Label lblFontFamily, lblFontSize, lblStatus;
+    Label lblFontFamily, lblFontSize, statusBar;
     ComboBox<String> combo;
     Button loadButton, reset, info;
     ToggleButton toggle;
@@ -152,6 +152,11 @@ public class Fonty extends Application {
             } catch (IOException | FontFormatException exc) {
                 exc.printStackTrace();
             }
+            try {
+                validateChars();
+            } catch (IOException | FontFormatException ex) {
+                ex.printStackTrace();
+            }
         });
 
         toggle = new ToggleButton("File mode");
@@ -161,7 +166,7 @@ public class Fonty extends Application {
                 combo.setDisable(true);
                 cbBold.setDisable(true);
                 cbItalic.setDisable(true);
-                lblStatus.setText("Non-latin characters might be displayed in a fallback font");
+                statusBar.setText("Non-latin characters might be displayed in a fallback font");
             } else {
                 combo.setDisable(false);
                 cbBold.setDisable(false);
@@ -212,11 +217,11 @@ public class Fonty extends Application {
         text.minHeightProperty().bind(stage.heightProperty().subtract(108));
         text.setPadding(new Insets(8));
 
-        lblStatus = new Label();
-        lblStatus.setPadding(new Insets(0, 0, 2, 8));
+        statusBar = new Label();
+        statusBar.setPadding(new Insets(0, 0, 2, 8));
         HBox statusBar = new HBox();
         statusBar.setMaxHeight(24);
-        statusBar.getChildren().add(lblStatus);
+        statusBar.getChildren().add(this.statusBar);
         statusBar.setAlignment(Pos.CENTER_LEFT);
 
         VBox box = new VBox();
@@ -224,7 +229,7 @@ public class Fonty extends Application {
         box.getChildren().addAll(hBox, text, statusBar);
 
         for (var node : Arrays.asList(
-                lblFontFamily, lblFontSize, cbBold, cbItalic, loadButton, toggle, reset, info, lblStatus))
+                lblFontFamily, lblFontSize, cbBold, cbItalic, loadButton, toggle, reset, info, this.statusBar))
             node.setFont(defFont);
 
         Scene scene = new Scene(box, defWidth, defHeight);
@@ -254,15 +259,15 @@ public class Fonty extends Application {
     }
 
     private void validateChars() throws IOException, FontFormatException {
-        lblStatus.setText("Non-latin characters might be displayed in a fallback font");
+        statusBar.setText("Some characters might not be supported on current font");
         String s = text.getText();
         if (toggle.isSelected()) {
             java.awt.Font f = java.awt.Font.createFont(0, new File(String.valueOf(openedFile)));
             for (int i = 0; i < s.length(); i++) {
                 char c = s.charAt(i);
                 if (!f.canDisplay(c)) {
-                    lblStatus.setText(
-                            "Loaded font does not support all scripts on displayed text - using fallback font");
+                    statusBar.setText(
+                            "Loaded font does not support all characters on displayed text");
                     break;
                 }
             }
