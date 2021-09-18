@@ -32,7 +32,7 @@ public class Fonty extends Application {
     Preferences prefs;
     double defWidth, defHeight;
 
-    Label lblFontFamily, lblFontSize, statusBar;
+    Label lblFontFamily, lblFontSize, statusLabel;
     ComboBox<String> combo;
     Button loadButton, reset, info;
     ToggleButton toggle;
@@ -46,7 +46,7 @@ public class Fonty extends Application {
     static String argFont;
 
     @Override
-    public void start(Stage stage) throws IOException, FontFormatException {
+    public void start(Stage stage) {
         prefs = Preferences.userNodeForPackage(Fonty.class);
         defWidth = 1024;
         defHeight = 768;
@@ -152,11 +152,6 @@ public class Fonty extends Application {
             } catch (IOException | FontFormatException exc) {
                 exc.printStackTrace();
             }
-            try {
-                validateChars();
-            } catch (IOException | FontFormatException ex) {
-                ex.printStackTrace();
-            }
         });
 
         toggle = new ToggleButton("File mode");
@@ -166,18 +161,12 @@ public class Fonty extends Application {
                 combo.setDisable(true);
                 cbBold.setDisable(true);
                 cbItalic.setDisable(true);
-                statusBar.setText("Non-latin characters might be displayed in a fallback font");
             } else {
                 combo.setDisable(false);
                 cbBold.setDisable(false);
                 cbItalic.setDisable(false);
                 stage.setTitle("Fonty");
                 setSelFont();
-                try {
-                    validateChars();
-                } catch (IOException | FontFormatException exc) {
-                    exc.printStackTrace();
-                }
             }
         });
 
@@ -217,11 +206,11 @@ public class Fonty extends Application {
         text.minHeightProperty().bind(stage.heightProperty().subtract(108));
         text.setPadding(new Insets(8));
 
-        statusBar = new Label();
-        statusBar.setPadding(new Insets(0, 0, 2, 8));
+        statusLabel = new Label();
+        statusLabel.setPadding(new Insets(0, 0, 2, 8));
         HBox statusBar = new HBox();
         statusBar.setMaxHeight(24);
-        statusBar.getChildren().add(this.statusBar);
+        statusBar.getChildren().add(statusLabel);
         statusBar.setAlignment(Pos.CENTER_LEFT);
 
         VBox box = new VBox();
@@ -229,7 +218,7 @@ public class Fonty extends Application {
         box.getChildren().addAll(hBox, text, statusBar);
 
         for (var node : Arrays.asList(
-                lblFontFamily, lblFontSize, cbBold, cbItalic, loadButton, toggle, reset, info, this.statusBar))
+                lblFontFamily, lblFontSize, cbBold, cbItalic, loadButton, toggle, reset, info, statusLabel))
             node.setFont(defFont);
 
         Scene scene = new Scene(box, defWidth, defHeight);
@@ -246,7 +235,7 @@ public class Fonty extends Application {
         getArgFont(stage);
     }
 
-    private void getArgFont(Stage stage) throws IOException, FontFormatException {
+    private void getArgFont(Stage stage) {
         if (argFont != null) {
             openFile(stage);
             text.setFont(openedFont);
@@ -255,26 +244,9 @@ public class Fonty extends Application {
             cbBold.setDisable(true);
             cbItalic.setDisable(true);
         }
-        validateChars();
     }
 
-    private void validateChars() throws IOException, FontFormatException {
-        statusBar.setText("Some characters might not be supported on current font");
-        String s = text.getText();
-        if (toggle.isSelected()) {
-            java.awt.Font f = java.awt.Font.createFont(0, new File(String.valueOf(openedFile)));
-            for (int i = 0; i < s.length(); i++) {
-                char c = s.charAt(i);
-                if (!f.canDisplay(c)) {
-                    statusBar.setText(
-                            "Loaded font does not support all characters on displayed text");
-                    break;
-                }
-            }
-        }
-    }
-
-    private void openFile(Stage stage) throws IOException, FontFormatException {
+    private void openFile(Stage stage) {
         File file = new File(String.valueOf(Paths.get(
                 URI.create("file:///" + argFont.replace(" ", "%20")))));
         try {
@@ -283,7 +255,6 @@ public class Fonty extends Application {
         } catch (FileNotFoundException exc) {
             exc.printStackTrace();
         }
-        validateChars();
     }
 
     private boolean loadFont(Stage stage) throws IOException, FontFormatException {
@@ -297,26 +268,17 @@ public class Fonty extends Application {
         } catch (IOException exc) {
             exc.printStackTrace();
         }
-        validateChars();
         return loaded;
     }
 
     private void spinnerClicked(Stage stage) throws IOException, FontFormatException {
         if (toggle.isSelected()) {
-            if (argFont != null) {
+            if (argFont != null)
                 openFile(stage);
-            } else {
-                try {
-                    openedFont = Font.loadFont(new FileInputStream(openedFile), 42);
-                } catch (FileNotFoundException exc) {
-                    exc.printStackTrace();
-                }
-            }
-            text.setFont(Font.font(openedFont.getFamily(), spinner.getValue()));
+            text.setFont(Font.loadFont(new FileInputStream(openedFile), spinner.getValue()));
         } else {
             setSelFont();
         }
-        validateChars();
     }
 
     private void setSelFont() {
