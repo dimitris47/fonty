@@ -44,6 +44,7 @@ public class Fonty extends Application {
     File openedFile;
     Font openedFont;
     static String argFont;
+    static String fallbackStatus;
 
     @Override
     public void start(Stage stage) {
@@ -64,6 +65,9 @@ public class Fonty extends Application {
                                 
                 ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ
                 αβγδεζηθικλμνξοπρστυφχψωςάέήίόύώϊϋ""";
+
+        fallbackStatus = "If selected font does not support all displayed characters, " +
+                "the system font will be used as a fallback.";
 
         lblFontFamily = new Label("Font Family:");
 
@@ -148,6 +152,7 @@ public class Fonty extends Application {
                     combo.setDisable(true);
                     cbBold.setDisable(true);
                     cbItalic.setDisable(true);
+                    statusLabel.setText("");
                 }
             } catch (IOException | FontFormatException exc) {
                 exc.printStackTrace();
@@ -167,6 +172,7 @@ public class Fonty extends Application {
                 cbItalic.setDisable(false);
                 stage.setTitle("Fonty");
                 setSelFont();
+                statusLabel.setText(fallbackStatus);
             }
         });
 
@@ -233,6 +239,7 @@ public class Fonty extends Application {
         stage.show();
         setSelFont();
         getArgFont(stage);
+        statusLabel.setText(fallbackStatus);
     }
 
     private void getArgFont(Stage stage) {
@@ -276,8 +283,10 @@ public class Fonty extends Application {
             if (argFont != null)
                 openFile(stage);
             text.setFont(Font.loadFont(new FileInputStream(openedFile), spinner.getValue()));
+            statusLabel.setText("");
         } else {
             setSelFont();
+            statusLabel.setText(fallbackStatus);
         }
     }
 
