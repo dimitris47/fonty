@@ -1,7 +1,7 @@
 # fonty
 
 What it is:
-- a minimal font preview app that can display both user/system install fonts and fonts loaded from a file
+- a minimal font preview app that can display both user/system installed fonts and fonts loaded from a file
 
 What it is not (at least for now):
 - a font installer/manager
