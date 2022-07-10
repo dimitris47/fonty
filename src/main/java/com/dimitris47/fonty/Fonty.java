@@ -60,7 +60,7 @@ public class Fonty extends Application {
     TextArea text;
     String defText;
 
-    File openedFile;
+    static File openedFile;
     Font openedFont;
     static String argFont;
     static String fallbackStatus;
@@ -300,8 +300,9 @@ public class Fonty extends Application {
 
     private void spinnerClicked(Stage stage) throws IOException, FontFormatException {
         if (toggle.isSelected()) {
-            if (argFont != null)
+            if (argFont != null) {
                 openFile(stage);
+            }
             text.setFont(Font.loadFont(new FileInputStream(openedFile), spinner.getValue()));
             statusLabel.setText("");
         } else {
@@ -357,6 +358,7 @@ public class Fonty extends Application {
     public static void main(String[] args) {
         try {
             argFont = args[0];
+            openedFile = new File(argFont);
         } catch (IndexOutOfBoundsException e) {
             System.out.println("No file loaded as argument");
         }
