@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Dimitris Psathas <dimitrisinbox@gmail.com>
+ * Copyright 2021-2022 Dimitris Psathas <dimitrisinbox@gmail.com>
  *
  * This file is part of Fonty.
  *
@@ -207,7 +207,7 @@ public class Fonty extends Application {
 
                 Published under the GPLv3 License
                 
-                \u00A9 2021 Dimitris Psathas""";
+                \u00A9 2021-2022 Dimitris Psathas""";
 
             Alert infoDialog = new Alert(Alert.AlertType.INFORMATION);
             infoDialog.setTitle("Program Info");

@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Dimitris Psathas <dimitrisinbox@gmail.com>
+ * Copyright 2021-2022 Dimitris Psathas <dimitrisinbox@gmail.com>
  *
  * This file is part of Fonty.
  *
