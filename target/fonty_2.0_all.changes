@@ -1,0 +1,20 @@
+Format: 1.8
+Date: Sat, 18 Sep 2021 14:16:18 +0300
+Source: fonty
+Binary: fonty
+Architecture: amd64
+Version: 2.0
+Distribution: development
+Urgency: low
+Maintainer: DP Software <>
+Changed-By: DP Software <>
+Description:
+ fonty - fonty
+Changes:
+ fonty (2.0) development; urgency=low
+Checksums-Sha1:
+ f61b9423159d6a7e03d7528dfb68db6c51da8f5d 37763320 fonty_2.0.deb
+Checksums-Sha256:
+ c64d89b43525d93fa1a40ab96302e799267a36650c1d967848a24258b88d623e 37763320 fonty_2.0.deb
+Files:
+ 69bc341aa172b92ba5c4f145759edd67 37763320 misc optional fonty_2.0.deb
