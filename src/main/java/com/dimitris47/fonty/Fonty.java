@@ -232,8 +232,9 @@ public class Fonty extends Application {
         text.setPadding(new Insets(8));
 
         statusLabel = new Label();
-        statusLabel.setPadding(new Insets(0, 0, 2, 8));
+        statusLabel.setPadding(new Insets(0, 0, 8, 8));
         HBox statusBar = new HBox();
+        statusBar.setMinHeight(16);
         statusBar.setMaxHeight(24);
         statusBar.getChildren().add(statusLabel);
         statusBar.setAlignment(Pos.CENTER_LEFT);
@@ -274,7 +275,7 @@ public class Fonty extends Application {
 
     private void openFile(Stage stage) {
         File file = new File(String.valueOf(Paths.get(
-                URI.create("file:///" + argFont.replace(" ", "%20")))));
+                URI.create("file:///" + argFont.replace(" ", "%20").replace("\\", "/")))));
         try {
             openedFont = Font.loadFont(new FileInputStream(file), 42);
             stage.setTitle("Fonty - " + file.getName());
